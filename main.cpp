@@ -117,43 +117,43 @@ int main(int argc, char *argv[])
 
     while (!close)
     {
-        SDL_GetWindowSize(win, &witdh, &height);
-        if (witdh != witdh_old | height != height_old)
-        {
-            back.w = witdh + 100;
-            back.h = height + 100;
-            SDL_Rect dest;
-            SDL_Rect back;
-            SDL_Rect pipe;
-            SDL_Rect coin;
-            SDL_Rect bad;
-            // connects our texture with dest to control position
-            SDL_QueryTexture(bird_tex, NULL, NULL, &dest.w, &dest.h);
-            SDL_QueryTexture(back_tex, NULL, NULL, &back.w, &back.h);
-            SDL_QueryTexture(pipe_tex, NULL, NULL, &pipe.w, &pipe.h);
-            SDL_QueryTexture(coin_tex, NULL, NULL, &coin.w, &coin.h);
-            SDL_QueryTexture(bad_tex, NULL, NULL, &bad.w, &bad.h);
-            back.x = back.x - 60;
-            pipe.x = witdh + 150;
-            pipe.y = genrand(180, height - 100);
-            dest.x = (witdh - dest.w) / 2;
-            dest.y = (height - dest.h) / 2;
-            pipe.w = 150;
-            pipe.h = 5000;
-            dest.w /= 6;
-            dest.h /= 6;
-            coin.w /= 15;
-            coin.h /= 15;
-            bad.w /= 17;
-            bad.h /= 17;
-            height_old = height;
-            witdh_old = witdh;
-        }
         SDL_Event event;
 
         // Events management
         while (SDL_PollEvent(&event))
         {
+            if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(win) && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+            {
+                SDL_GetWindowSize(win, &witdh, &height);
+                back.w = witdh + 100;
+                back.h = height + 100;
+                SDL_Rect dest;
+                SDL_Rect back;
+                SDL_Rect pipe;
+                SDL_Rect coin;
+                SDL_Rect bad;
+                // connects our texture with dest to control position
+                SDL_QueryTexture(bird_tex, NULL, NULL, &dest.w, &dest.h);
+                SDL_QueryTexture(back_tex, NULL, NULL, &back.w, &back.h);
+                SDL_QueryTexture(pipe_tex, NULL, NULL, &pipe.w, &pipe.h);
+                SDL_QueryTexture(coin_tex, NULL, NULL, &coin.w, &coin.h);
+                SDL_QueryTexture(bad_tex, NULL, NULL, &bad.w, &bad.h);
+                back.x = back.x - 60;
+                pipe.x = witdh + 150;
+                pipe.y = genrand(180, height - 100);
+                dest.x = (witdh - dest.w) / 2;
+                dest.y = (height - dest.h) / 2;
+                pipe.w = 150;
+                pipe.h = 5000;
+                dest.w /= 6;
+                dest.h /= 6;
+                coin.w /= 15;
+                coin.h /= 15;
+                bad.w /= 17;
+                bad.h /= 17;
+                height_old = height;
+                witdh_old = witdh;
+            }
             if (event.type == SDL_KEYDOWN)
             {
                 if (event.key.keysym.scancode != SDL_SCANCODE_ESCAPE)
@@ -208,7 +208,8 @@ int main(int argc, char *argv[])
             bad.x = genrand((witdh / 2) + (witdh / 8), witdh - bad.w);
             bad.y = genrand(0, height - bad.h);
         }
-        if (score == -1) {
+        if (score == -1)
+        {
             gameover = true;
             score++;
         }
@@ -280,6 +281,30 @@ int main(int argc, char *argv[])
             {
                 while (SDL_PollEvent(&event))
                 {
+                    if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(win) && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+                    {
+                        SDL_GetWindowSize(win, &witdh, &height);
+                        TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
+                        SDL_Color color = {255, 255, 255};
+                        SDL_Surface *surface = TTF_RenderText_Solid(font, "Game over! press R to restart, score:", color);
+                        SDL_Surface *sctext = TTF_RenderText_Solid(font, intToStr(score), color);
+                        SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
+                        SDL_Texture *sc = SDL_CreateTextureFromSurface(rend, sctext);
+                        int texW1 = 0;
+                        int texH1 = 0;
+                        int texW = 0;
+                        int texH = 0;
+                        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+                        SDL_QueryTexture(sc, NULL, NULL, &texW1, &texH1);
+                        SDL_Rect dstrect = {0, 0, texW, texH};
+                        SDL_Rect scpos = {0, 30, texW1, texH1};
+                        dstrect.x = (witdh - dstrect.w) / 2;
+                        scpos.x = (witdh - scpos.w) / 2;
+                        SDL_RenderClear(rend);
+                        SDL_RenderCopy(rend, texture, NULL, &dstrect);
+                        SDL_RenderCopy(rend, sc, NULL, &scpos);
+                        SDL_RenderPresent(rend);
+                    }
                     if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                         close++;
                     if (event.type == SDL_QUIT)
