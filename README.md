@@ -1,3 +1,4 @@
+![GitHub all releases](https://img.shields.io/github/downloads/hannescam/not-snake/total)
 # F-Brd
 a funny clone of flappy bird made with C++ with SDL2 and a lot of png files
 ## Compilation
