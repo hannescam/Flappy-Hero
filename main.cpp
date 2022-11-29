@@ -6,12 +6,17 @@
 #include <iostream>
 #include <cstring>
 
+bool coin_other = false;
+double coin_angle;
+int coin_cnt;
 int height = 600;
 int witdh = 800;
+bool coin_move = true;
 
 int height_old = 600;
 int witdh_old = 800;
-
+int coin_h;
+int coin_w;
 int score;
 int jump;
 bool collected = false;
@@ -172,7 +177,29 @@ int main(int argc, char *argv[])
             }
         }
         pipe.x -= 3;
-        coin.x -= 3;
+        if (coin_move) {
+            coin.x -= 3;
+        }else{
+           if (coin_cnt < 90){
+                coin_cnt++;
+                coin_angle += 10;
+                coin.h -= 1;
+                coin.w -= 1;
+                coin_other = true;
+                if (coin.h <= 0) coin_cnt = 37;
+                if (coin.w <= 0) coin_cnt = 37;
+            } else {
+                score++;
+                coin_move = true;
+                coin_cnt = 0;
+                coin_angle = 0;
+                coin_other = false;
+                coin.h = coin_h;
+                coin.w = coin_w;
+                coin.x = genrand((witdh / 2) + (witdh / 8), witdh - coin.w);
+                coin.y = genrand(0, height - coin.h);
+            } 
+        }
         bad.x -= 3;
         if (pipe.x < -pipe.w)
         {
@@ -180,11 +207,17 @@ int main(int argc, char *argv[])
             pipe.x += witdh + pipe.w;
             pipe.y = genrand(180, height - 100);
         }
-        if (coin.x < 0)
+        if (coin.x + coin.w < 0 && !coin_other)
         {
             // collected = false;
             coin.x = genrand((witdh / 2) + (witdh / 8), witdh - coin.w);
             coin.y = genrand(0, height - coin.h);
+        }
+        if (coin.x + coin_w < 0 && coin_other)
+        {
+            // collected = false;
+            coin.x = genrand((witdh / 2) + (witdh / 8), witdh - coin_w);
+            coin.y = genrand(0, height - coin_h);
         }
         if (bad.x < 0)
         {
@@ -196,11 +229,12 @@ int main(int argc, char *argv[])
         {
             gameover = true;
         }
-        if (coin.y < dest.y + dest.h && coin.y + coin.h >= dest.y && coin.x <= dest.x + dest.w - 30 && coin.x + coin.w >= dest.x)
+
+        if (coin.y < dest.y + dest.h && coin.y + coin.h >= dest.y && coin.x <= dest.x + dest.w - 30 && coin.x + coin.w >= dest.x && !coin_other)
         {
-            score++;
-            coin.x = genrand((witdh / 2) + (witdh / 8), witdh - coin.w);
-            coin.y = genrand(0, height - coin.h);
+            coin_h = coin.h;
+            coin_w = coin.w;
+            coin_move = false;
         }
         if (bad.y < dest.y + dest.h && bad.y + bad.h >= dest.y && bad.x <= dest.x + dest.w - 30 && bad.x + bad.w >= dest.x)
         {
@@ -350,7 +384,10 @@ int main(int argc, char *argv[])
             SDL_RenderCopy(rend, back_tex, NULL, &back);
             SDL_RenderCopy(rend, pipe_tex, NULL, &pipe);
             SDL_RenderCopy(rend, bird_tex, NULL, &dest);
-            SDL_RenderCopy(rend, coin_tex, NULL, &coin);
+            SDL_RenderCopyEx(rend, coin_tex, NULL, &coin, coin_angle, NULL, SDL_FLIP_NONE);
+            //coin_angle += 10;
+            if(coin_angle >= 360.0)
+                coin_angle -= 0.01;
             SDL_RenderCopy(rend, bad_tex, NULL, &bad);
             SDL_RenderCopy(rend, texture, NULL, &dstrect);
         }
@@ -367,7 +404,7 @@ int main(int argc, char *argv[])
     SDL_DestroyTexture(pipe_tex);
     SDL_DestroyTexture(coin_tex);
     SDL_DestroyTexture(back_tex);
-    SDL_DestroyTexture(back_tex);
+    SDL_DestroyTexture(bad_tex);
     //  destroy renderer
     SDL_DestroyRenderer(rend);
 
