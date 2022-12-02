@@ -6,6 +6,8 @@
 #include <iostream>
 #include <cstring>
 
+bool pressed_1 = false;
+SDL_Surface *surface;
 bool coin_other = false;
 double coin_angle;
 int coin_cnt;
@@ -46,7 +48,7 @@ char *intToStr(int data)
 int main(int argc, char *argv[])
 {
     TTF_Init();
-
+    TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
     // returns zero on success else non-zero
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -68,19 +70,36 @@ int main(int argc, char *argv[])
     SDL_Surface *coin_import;
     SDL_Surface *bad_import;
     // please provide a path for your image
-    surface = IMG_Load("bird.png");
-    background = IMG_Load("back.png");
-    pipe_import = IMG_Load("pipe.png");
-    coin_import = IMG_Load("coin.png");
-    bad_import = IMG_Load("bad.png");
+    SDL_Texture *bad_tex;
+    SDL_Texture *back_tex;
+    SDL_Texture *bird_tex;
+    SDL_Texture *pipe_tex;
+    SDL_Texture *coin_tex;
     // loads image to our graphics hardware memory.
-    SDL_Texture *back_tex = SDL_CreateTextureFromSurface(rend, background);
-    SDL_Texture *bird_tex = SDL_CreateTextureFromSurface(rend, surface);
-    SDL_Texture *pipe_tex = SDL_CreateTextureFromSurface(rend, pipe_import);
-    SDL_Texture *coin_tex = SDL_CreateTextureFromSurface(rend, coin_import);
-    SDL_Texture *bad_tex = SDL_CreateTextureFromSurface(rend, bad_import);
+    background = IMG_Load("back.png");
+    back_tex = SDL_CreateTextureFromSurface(rend, background);
+    SDL_FreeSurface(background);
+    surface = IMG_Load("bird.png");
+    bird_tex = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+    pipe_import = IMG_Load("pipe.png");
+    if (!pipe_import)
+    {
+        printf("Failed to load image pipe. Error: %s", IMG_GetError());
+    }
+    pipe_tex = SDL_CreateTextureFromSurface(rend, pipe_import);
+    if (!pipe_tex)
+    {
+        printf("Failed to load texture pipe. Error: %s", SDL_GetError());
+    }
+    SDL_FreeSurface(pipe_import);
+    coin_import = IMG_Load("coin.png");
+    coin_tex = SDL_CreateTextureFromSurface(rend, coin_import);
+    SDL_FreeSurface(coin_import);
+    bad_import = IMG_Load("bad.png");
+    bad_tex = SDL_CreateTextureFromSurface(rend, bad_import);
+    SDL_FreeSurface(bad_import);
     // clears main-memory
-
     // let us control our image position
     // so that we can move it with our keyboard.
     SDL_Rect dest;
@@ -97,19 +116,19 @@ int main(int argc, char *argv[])
     SDL_GetWindowSize(win, &witdh, &height);
     back.x = back.x - 60;
     pipe.x = witdh + 150;
-    pipe.y = genrand(180, height - 100);
+    pipe.y = genrand(250, height - 100);
     dest.x = (witdh - dest.w) / 2;
     dest.y = (height - dest.h) / 2;
     back.w = witdh + 100;
     back.h = height + 100;
     pipe.w = 150;
-    pipe.h = 5000;
+    pipe.h = 4000;
     dest.w /= 6;
     dest.h /= 6;
     coin.w /= 15;
     coin.h /= 15;
-    bad.w /= 17;
-    bad.h /= 17;
+    bad.w /= 12;
+    bad.h /= 12;
     // std::uniform_int_distribution<int> coin_rand_x((witdh / 2) + (witdh / 10), witdh - coin.w);
     // std::uniform_int_distribution<int> coin_rand_y(0, height - coin.h);
     /*Randomer coin_rand_x{0, witdh - coin.w};
@@ -145,20 +164,21 @@ int main(int argc, char *argv[])
                 SDL_QueryTexture(bad_tex, NULL, NULL, &bad.w, &bad.h);
                 back.x = back.x - 60;
                 pipe.x = witdh + 150;
-                pipe.y = genrand(180, height - 100);
+                pipe.y = genrand(250, height - 100);
                 dest.x = (witdh - dest.w) / 2;
                 dest.y = (height - dest.h) / 2;
                 pipe.w = 150;
-                pipe.h = 5000;
+                pipe.h = 4000;
                 dest.w /= 6;
                 dest.h /= 6;
                 coin.w /= 15;
                 coin.h /= 15;
-                bad.w /= 17;
-                bad.h /= 17;
+                bad.w /= 12;
+                bad.h /= 12;
                 height_old = height;
                 witdh_old = witdh;
             }
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && jump == 0) jump += 15;
             if (event.type == SDL_KEYDOWN)
             {
                 if (event.key.keysym.scancode != SDL_SCANCODE_ESCAPE)
@@ -177,18 +197,26 @@ int main(int argc, char *argv[])
             }
         }
         pipe.x -= 3;
-        if (coin_move) {
+        if (coin_move)
+        {
             coin.x -= 3;
-        }else{
-           if (coin_cnt < 90){
+        }
+        else
+        {
+            if (coin_cnt < 90)
+            {
                 coin_cnt++;
                 coin_angle += 10;
                 coin.h -= 1;
                 coin.w -= 1;
                 coin_other = true;
-                if (coin.h <= 0) coin_cnt = 37;
-                if (coin.w <= 0) coin_cnt = 37;
-            } else {
+                if (coin.h <= 0)
+                    coin_cnt = 37;
+                if (coin.w <= 0)
+                    coin_cnt = 37;
+            }
+            else
+            {
                 score++;
                 coin_move = true;
                 coin_cnt = 0;
@@ -198,14 +226,14 @@ int main(int argc, char *argv[])
                 coin.w = coin_w;
                 coin.x = genrand((witdh / 2) + (witdh / 8), witdh - coin.w);
                 coin.y = genrand(0, height - coin.h);
-            } 
+            }
         }
         bad.x -= 3;
         if (pipe.x < -pipe.w)
         {
             collected = false;
             pipe.x += witdh + pipe.w;
-            pipe.y = genrand(180, height - 100);
+            pipe.y = genrand(250, height - 100);
         }
         if (coin.x + coin.w < 0 && !coin_other)
         {
@@ -290,9 +318,9 @@ int main(int argc, char *argv[])
 
         if (gameover)
         {
-            TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
+            //TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
             SDL_Color color = {255, 255, 255};
-            SDL_Surface *surface = TTF_RenderText_Solid(font, "Game over! press R to restart, score:", color);
+            SDL_Surface *surface = TTF_RenderText_Solid(font, "Game over! press R or touch the screen to restart, score:", color);
             SDL_Surface *sctext = TTF_RenderText_Solid(font, intToStr(score), color);
             SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
             SDL_Texture *sc = SDL_CreateTextureFromSurface(rend, sctext);
@@ -310,7 +338,6 @@ int main(int argc, char *argv[])
             SDL_RenderCopy(rend, texture, NULL, &dstrect);
             SDL_RenderCopy(rend, sc, NULL, &scpos);
             SDL_RenderPresent(rend);
-            close = 0;
             while (!close)
             {
                 while (SDL_PollEvent(&event))
@@ -318,12 +345,14 @@ int main(int argc, char *argv[])
                     if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(win) && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                     {
                         SDL_GetWindowSize(win, &witdh, &height);
-                        TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
+                        //TTF_Font *font = TTF_OpenFont("Bebas.ttf", 25);
                         SDL_Color color = {255, 255, 255};
-                        SDL_Surface *surface = TTF_RenderText_Solid(font, "Game over! press R to restart, score:", color);
+                        surface = TTF_RenderText_Solid(font, "Game over! press R or touch the screen to restart, score:", color);
                         SDL_Surface *sctext = TTF_RenderText_Solid(font, intToStr(score), color);
                         SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
                         SDL_Texture *sc = SDL_CreateTextureFromSurface(rend, sctext);
+	    		SDL_FreeSurface(sctext);
+			//SDL_FreeSurface(surface);
                         int texW1 = 0;
                         int texH1 = 0;
                         int texW = 0;
@@ -343,6 +372,12 @@ int main(int argc, char *argv[])
                         close++;
                     if (event.type == SDL_QUIT)
                         close++;
+                    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+                    {
+                        close++;
+                        score = 0;
+                        restart = true;
+                    }
                     if (event.key.keysym.scancode == SDL_SCANCODE_R)
                     {
                         close++;
@@ -361,7 +396,7 @@ int main(int argc, char *argv[])
                 restart = false;
                 close = 0;
                 pipe.x = witdh + 150;
-                pipe.y = genrand(180, height - 100);
+                pipe.y = genrand(250, height - 100);
                 dest.x = (witdh - dest.w) / 2;
                 dest.y = (height - dest.h) / 2;
                 jump = 0;
@@ -370,11 +405,23 @@ int main(int argc, char *argv[])
         else
         {
             // clears the screen
-            TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
+            //TTF_Font *font = TTF_OpenFont("Bebas.ttf", 25);
             SDL_Color color = {255, 255, 255};
-            SDL_Surface *surface = TTF_RenderText_Solid(font, intToStr(score), color);
+	    surface = TTF_RenderText_Solid(font, intToStr(score), color);
+            if (!font)
+            {
+                printf("Failed to load font 'arial'. Error: %s \n", TTF_GetError());
+            }
+            if (!surface)
+            {
+                printf("Failed to load Surface 'text'. Error: %s \n", IMG_GetError());
+            }
             SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
-
+	    //SDL_FreeSurface(surface);
+            if (!texture)
+            {
+                printf("Failed to load Texture 'text'. Error: %s \n", SDL_GetError());
+            }
             int texW = 0;
             int texH = 0;
             SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
@@ -385,11 +432,12 @@ int main(int argc, char *argv[])
             SDL_RenderCopy(rend, pipe_tex, NULL, &pipe);
             SDL_RenderCopy(rend, bird_tex, NULL, &dest);
             SDL_RenderCopyEx(rend, coin_tex, NULL, &coin, coin_angle, NULL, SDL_FLIP_NONE);
-            //coin_angle += 10;
-            if(coin_angle >= 360.0)
+            // coin_angle += 10;
+            if (coin_angle >= 360.0)
                 coin_angle -= 0.01;
             SDL_RenderCopy(rend, bad_tex, NULL, &bad);
             SDL_RenderCopy(rend, texture, NULL, &dstrect);
+	    //SDL_DestroyTexture(texture);
         }
         // triggers the double buffers
         // for multiple rendering
