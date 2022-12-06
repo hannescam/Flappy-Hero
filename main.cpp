@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
     // SDL_Window *win = SDL_CreateWindow("F-Bird", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, witdh, height, 0);
-    SDL_Window *win = SDL_CreateWindow("F-Bird", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, witdh, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    SDL_Window *win = SDL_CreateWindow("Flappy-Hero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, witdh, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     // triggers the program that controls
     // your graphics hardware and sets flags
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     background = IMG_Load("back.png");
     back_tex = SDL_CreateTextureFromSurface(rend, background);
     SDL_FreeSurface(background);
-    surface = IMG_Load("bird.png");
+    surface = IMG_Load("hero.png");
     bird_tex = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
     pipe_import = IMG_Load("pipe.png");
