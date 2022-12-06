@@ -1,6 +1,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/hannescam/Flappy-Hero/total)
 # Flappy-Hero
 a funny clone of flappy bird made with C++ with SDL2 and a lot of png files
+
 info: recently changed the name to Flappy-Hero
 ## Compilation
 To compile, simply execute the following command.
