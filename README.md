@@ -1,8 +1,7 @@
-![GitHub all releases](https://img.shields.io/github/downloads/hannescam/F-Bird/total)
-# F-Brd
+![GitHub all releases](https://img.shields.io/github/downloads/hannescam/Flappy-Hero/total)
+# Flappy-Hero
 a funny clone of flappy bird made with C++ with SDL2 and a lot of png files
-if anyone has a good idea for a new name because the main character isnt a bird anymore
-and therefore f-bird isnt such a good name for this game
+info: recently changed the name to Flappy-Hero
 ## Compilation
 To compile, simply execute the following command.
 
