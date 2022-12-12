@@ -107,6 +107,11 @@ int main(int argc, char *argv[])
     SDL_Rect pipe;
     SDL_Rect coin;
     SDL_Rect bad;
+    SDL_zero(dest);
+    SDL_zero(back);
+    SDL_zero(pipe);
+    SDL_zero(coin);
+    SDL_zero(bad);
     // connects our texture with dest to control position
     SDL_QueryTexture(bird_tex, NULL, NULL, &dest.w, &dest.h);
     SDL_QueryTexture(back_tex, NULL, NULL, &back.w, &back.h);
