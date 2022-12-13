@@ -208,9 +208,9 @@ int main(int argc, char *argv[])
                 coin.w -= 1;
                 coin_other = true;
                 if (coin.h <= 0)
-                    coin_cnt = 37;
+                    coin_cnt = 90;
                 if (coin.w <= 0)
-                    coin_cnt = 37;
+                    coin_cnt = 90;
             }
             else
             {
