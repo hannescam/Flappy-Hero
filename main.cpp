@@ -48,7 +48,7 @@ char *intToStr(int data)
 int main(int argc, char *argv[])
 {
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
+    TTF_Font *font = TTF_OpenFont("assets/arial.ttf", 25);
     // returns zero on success else non-zero
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -76,27 +76,19 @@ int main(int argc, char *argv[])
     SDL_Texture *pipe_tex;
     SDL_Texture *coin_tex;
     // loads image to our graphics hardware memory.
-    background = IMG_Load("back.png");
+    background = IMG_Load("assets/back.png");
     back_tex = SDL_CreateTextureFromSurface(rend, background);
     SDL_FreeSurface(background);
-    surface = IMG_Load("hero.png");
+    surface = IMG_Load("assets/hero.png");
     bird_tex = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
-    pipe_import = IMG_Load("pipe.png");
-    if (!pipe_import)
-    {
-        printf("Failed to load image pipe. Error: %s", IMG_GetError());
-    }
+    pipe_import = IMG_Load("assets/pipe.png");
     pipe_tex = SDL_CreateTextureFromSurface(rend, pipe_import);
-    if (!pipe_tex)
-    {
-        printf("Failed to load texture pipe. Error: %s", SDL_GetError());
-    }
     SDL_FreeSurface(pipe_import);
-    coin_import = IMG_Load("coin.png");
+    coin_import = IMG_Load("assets/coin.png");
     coin_tex = SDL_CreateTextureFromSurface(rend, coin_import);
     SDL_FreeSurface(coin_import);
-    bad_import = IMG_Load("bad.png");
+    bad_import = IMG_Load("assets/bad.png");
     bad_tex = SDL_CreateTextureFromSurface(rend, bad_import);
     SDL_FreeSurface(bad_import);
     // clears main-memory
@@ -110,8 +102,8 @@ int main(int argc, char *argv[])
     SDL_zero(dest);
     SDL_zero(back);
     SDL_zero(pipe);
-    SDL_zero(coin);
     SDL_zero(bad);
+    SDL_zero(coin);
     // connects our texture with dest to control position
     SDL_QueryTexture(bird_tex, NULL, NULL, &dest.w, &dest.h);
     SDL_QueryTexture(back_tex, NULL, NULL, &back.w, &back.h);
@@ -356,8 +348,8 @@ int main(int argc, char *argv[])
                         SDL_Surface *sctext = TTF_RenderText_Solid(font, intToStr(score), color);
                         SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
                         SDL_Texture *sc = SDL_CreateTextureFromSurface(rend, sctext);
-	    		SDL_FreeSurface(sctext);
-			//SDL_FreeSurface(surface);
+	    		        SDL_FreeSurface(sctext);
+			            //SDL_FreeSurface(surface);
                         int texW1 = 0;
                         int texH1 = 0;
                         int texW = 0;
@@ -397,6 +389,7 @@ int main(int argc, char *argv[])
             }
             else
             {
+                coin_cnt = 90;
                 gameover = false;
                 restart = false;
                 close = 0;
