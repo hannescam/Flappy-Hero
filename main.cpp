@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstring>
 
+bool changed;
 bool pressed_1 = false;
 SDL_Surface *surface;
 bool coin_other = false;
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
     SDL_GetWindowSize(win, &witdh, &height);
     back.x = back.x - 60;
     pipe.x = witdh + 150;
-    pipe.y = genrand(250, height - 100);
+    pipe.y = genrand(320, height - 100);
     dest.x = (witdh - dest.w) / 2;
     dest.y = (height - dest.h) / 2;
     back.w = witdh + 100;
@@ -143,8 +144,9 @@ int main(int argc, char *argv[])
         // Events management
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(win) && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+            if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(win) && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED | changed)
             {
+            	changed = false;
                 SDL_GetWindowSize(win, &witdh, &height);
                 back.w = witdh + 100;
                 back.h = height + 100;
@@ -161,7 +163,7 @@ int main(int argc, char *argv[])
                 SDL_QueryTexture(bad_tex, NULL, NULL, &bad.w, &bad.h);
                 back.x = back.x - 60;
                 pipe.x = witdh + 150;
-                pipe.y = genrand(250, height - 100);
+                pipe.y = genrand(320, height - 100);
                 dest.x = (witdh - dest.w) / 2;
                 dest.y = (height - dest.h) / 2;
                 pipe.w = 150;
@@ -230,7 +232,7 @@ int main(int argc, char *argv[])
         {
             collected = false;
             pipe.x += witdh + pipe.w;
-            pipe.y = genrand(250, height - 100);
+            pipe.y = genrand(320, height - 100);
         }
         if (coin.x + coin.w < 0 && !coin_other)
         {
@@ -341,6 +343,7 @@ int main(int argc, char *argv[])
                 {
                     if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(win) && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                     {
+                    	changed = true;
                         SDL_GetWindowSize(win, &witdh, &height);
                         //TTF_Font *font = TTF_OpenFont("Bebas.ttf", 25);
                         SDL_Color color = {255, 255, 255};
@@ -394,7 +397,7 @@ int main(int argc, char *argv[])
                 restart = false;
                 close = 0;
                 pipe.x = witdh + 150;
-                pipe.y = genrand(250, height - 100);
+                pipe.y = genrand(320, height - 100);
                 dest.x = (witdh - dest.w) / 2;
                 dest.y = (height - dest.h) / 2;
                 jump = 0;
