@@ -3,6 +3,7 @@
 a funny clone of flappy bird made with C++ with SDL2 and a lot of png files
 
 info: recently changed the name to Flappy-Hero
+there is also a android version: https://github.com/hannescam/Flappy-Hero-for-Android (not avvialible yet 404)
 ## Compilation
 To compile, simply execute the following command.
 
