@@ -15,7 +15,7 @@ int coin_cnt;
 int height = 600;
 int witdh = 800;
 bool coin_move = true;
-bool pause = true;
+bool ispaused = true;
 int height_old = 600;
 int witdh_old = 800;
 int coin_h;
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     while (!close)
     {
         SDL_Event event;
-        if (pause)
+        if (ispaused)
         {
             // TTF_Font *font = TTF_OpenFont("arial.ttf", 25);
             SDL_Color color = {255, 255, 255};
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
             SDL_RenderClear(rend);
             SDL_RenderCopy(rend, texture, NULL, &dstrect);
             SDL_RenderPresent(rend);
-            while (pause)
+            while (ispaused)
             {
                 while (SDL_PollEvent(&event))
                 {
@@ -177,23 +177,23 @@ int main(int argc, char *argv[])
                     }
                     if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                     {
-                        pause = false;
+                        ispaused = false;
                         close++;
                     }
                     if (event.type == SDL_QUIT)
                     {
-                        pause = false;
+                        ispaused = false;
                         close++;
                     }
                     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
                     {
-                        pause = false;
+                        ispaused = false;
                         // score = 0;
                         // restart = true;
                     }
                     if (event.key.keysym.scancode == SDL_SCANCODE_R)
                     {
-                        pause = false;
+                        ispaused = false;
                         // score = 0;
                         // restart = true;
                     }
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
                 }
                 else if (event.key.keysym.scancode == SDL_SCANCODE_P)
                 {
-                    pause = true;
+                    ispaused = true;
                 }
             }
             else if (event.type == SDL_QUIT)
